@@ -27,6 +27,8 @@ services:
     volumes:
       - ./config:/app/config
       - ./manage.py:/app/manage.py
+      - ./users:/app/users
+      - ./videos:/app/videos
     ports:
       - "8000:8000"
     depends_on:
