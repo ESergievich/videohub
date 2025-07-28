@@ -1,6 +1,7 @@
 from django.db import models
 
 from config import settings
+from videos.querysets import VideoQuerySet
 
 
 class Video(models.Model):
@@ -19,6 +20,12 @@ class Video(models.Model):
 
     def __str__(self):
         return self.name
+
+    objects = VideoQuerySet.as_manager()
+
+    def unpublish(self):
+        self.is_published = False
+        self.save(update_fields=["is_published"])
 
 
 class VideoFile(models.Model):
@@ -48,4 +55,3 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ("video", "user")
-
