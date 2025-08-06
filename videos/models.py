@@ -5,6 +5,16 @@ from videos.querysets import VideoQuerySet
 
 
 class Video(models.Model):
+    """
+    Represents a video entity in the database.
+
+    Fields:
+        - title, description, upload_date, etc. (depends on your model definition)
+
+    Purpose:
+        - Stores core video data and metadata.
+    """
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -29,7 +39,20 @@ class Video(models.Model):
 
 
 class VideoFile(models.Model):
+    """
+    Represents a file associated with a Video.
+
+    Purpose:
+        - Stores file metadata and a reference to the video file itself.
+
+    Usage:
+        Used for supporting multiple resolutions or file formats for a single video.
+    """
+
     class Quality(models.TextChoices):
+        """
+        Represents video quality levels.
+        """
         HD = "HD", "720p"
         FHD = "FHD", "1080p"
         UHD = "UHD", "4K"
@@ -50,6 +73,17 @@ class VideoFile(models.Model):
 
 
 class Like(models.Model):
+    """
+    Represents a like action on a Video.
+
+    Fields:
+        - user: who liked the video
+        - video: the video being liked
+
+    Purpose:
+        - Used to track user likes and calculate popularity statistics.
+    """
+
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="likes")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="likes")
 

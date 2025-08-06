@@ -7,11 +7,25 @@ from videos.models import Like, Video
 
 
 class LikeSetter:
+    """
+    Utility class for handling like actions on videos.
+
+    Purpose:
+        - Encapsulates the logic for adding or removing likes.
+        - Can be reused across views, signals, or services.
+    """
+
     def __init__(self, user: AppUser, video: Video):
+        """
+        Constructor for LikeSetter.
+        """
         self.user = user
         self.video = video
 
     def __update(self, value: int):
+        """
+        Updates the total_likes field of the video.
+        """
         self.video.total_likes = F("total_likes") + value
         self.video.save(update_fields=["total_likes"])
 

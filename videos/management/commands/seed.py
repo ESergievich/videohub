@@ -12,18 +12,54 @@ User = get_user_model()
 
 
 def clear_database():
+    """
+    Clears all models from the database.
+    """
     for model in apps.get_models():
         model.objects.all().delete()
 
 class Command(BaseCommand):
+    """
+    Custom Django management command.
+
+    Purpose:
+        - Implements CLI functionality using manage.py.
+
+    Usage:
+        Run with: python manage.py <command_name>
+    """
+
     help = "Заполняет тестовыми данными"
 
     def add_arguments(self, parser):
+        """
+        Add custom command-line arguments for the management command.
+
+        Args:
+            parser (ArgumentParser): The argument parser instance used to
+                define custom CLI arguments.
+
+        Custom Arguments:
+            --cleardb (bool): Clears the database before populating it.
+            --users (int): Number of users to create (default: 10).
+            --videos (int): Number of videos to create (default: 10).
+        """
         parser.add_argument('--cleardb', action='store_true', help='Очистить базу данных перед заполнением')
         parser.add_argument('--users', type=int, default=10, help='Количество пользователей')
         parser.add_argument('--videos', type=int, default=10, help='Количество видео')
 
     def handle(self, *args, **options):
+        """
+        Execute the management command logic.
+
+        Args:
+            *args: Positional arguments passed to the command.
+            **options: Dictionary of command-line options parsed by add_arguments().
+
+        Purpose:
+            - Optionally clears the database (if --cleardb is set).
+            - Creates a specified number of users and videos.
+        """
         if options['cleardb']:
             clear_database()
 

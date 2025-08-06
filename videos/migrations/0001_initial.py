@@ -4,6 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """
+    This migration creates the following models:
+    - Video
+    - VideoFile
+    - Like
+    """
     initial = True
 
     dependencies = [

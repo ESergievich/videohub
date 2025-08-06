@@ -11,9 +11,23 @@ from videos.services import LikeSetter
 
 
 class VideoViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    Django REST Framework viewset for Video objects.
+
+    Purpose:
+        - Provides read-only API endpoints for listing and retrieving videos.
+
+    Endpoints:
+        - GET /api/videos/
+        - GET /api/videos/{id}/
+    """
+
     queryset = Video.objects.all()
 
     def get_queryset(self):
+        """
+        Get queryset for the view.
+        """
         qs = super().get_queryset()
 
         if self.action in ("likes", "ids"):
@@ -27,10 +41,16 @@ class VideoViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.Ge
         return qs
 
     def get_serializer_class(self):
+        """
+        Get serializer class for the view.
+        """
         return VideoSerializer
 
     @action(["POST", "DELETE"], detail=True, permission_classes=[permissions.IsAuthenticated])
     def likes(self, request, *args, **kwargs):
+        """"
+        Like or unlike a video.
+        """
         handler = LikeSetter(user=request.user, video=self.get_object())
 
         if request.method == "POST":
@@ -45,11 +65,17 @@ class VideoViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.Ge
 
     @action(["GET"], detail=False, permission_classes=[permissions.IsAdminUser])
     def ids(self, request, *args, **kwargs):
+        """
+        Get ids of all published videos.
+        """
         videos = self.get_queryset().values_list("id", flat=True)
         return Response(videos)
 
     @action(["GET"], detail=False, url_path="statistics-subquery", permission_classes=[permissions.IsAdminUser])
     def statistics_subquery(self, request, *args, **kwargs):
+        """
+        Get statistics of all users.
+        """
         likes_sum = (
             Video.objects.published()
             .filter(owner=OuterRef("pk"))
@@ -63,6 +89,9 @@ class VideoViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.Ge
 
     @action(["GET"], detail=False, url_path="statistics-group-by", permission_classes=[permissions.IsAdminUser])
     def statistics_group_by(self, request, *args, **kwargs):
+        """
+        Get statistics of all videos.
+        """
         videos = Video.objects.published().statistics()
         serializer = StatisticsSerializer(videos, many=True)
         return Response(serializer.data)

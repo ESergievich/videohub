@@ -5,12 +5,28 @@ from .models import Video, VideoFile
 
 
 class VideoFileSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the VideoFile model.
+
+    Purpose:
+        - Transforms VideoFile data to/from JSON.
+        - Typically used as a nested serializer inside VideoSerializer.
+    """
+
     class Meta:
         model = VideoFile
         fields = ("file", "quality")
 
 
 class VideoSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Video model.
+
+    Purpose:
+        - Converts Video model instances into JSON format.
+        - Can include related files or statistics for detailed API responses.
+    """
+
     owner = serializers.CharField(source="owner.username", read_only=True)
     files = VideoFileSerializer(many=True, read_only=True)
 
@@ -27,6 +43,13 @@ class VideoSerializer(serializers.ModelSerializer):
 
 
 class StatisticsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for video statistics.
+
+    Purpose:
+        - Provides a structured representation of likes.
+    """
+
     username = serializers.CharField()
     likes_sum = serializers.IntegerField()
 
